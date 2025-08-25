@@ -1,0 +1,401 @@
+---
+title: "ETW2001 Assignment"
+format: html
+editor: visual
+execute: 
+  warning: False
+  message: False
+---
+
+# Student Name: Nashmia Shakeel
+
+# Student ID: 34091904
+
+```{r}
+#install.package("tidyverse)
+library(dplyr)
+library(readr)
+```
+
+```{r}
+big<- read.csv("bigbasket.csv")
+
+```
+
+## Section A
+
+### **1.**List down 4 data manipulation strategies that can be applied to this dataset to produce clean data for analysis. Justify how the strategies will help in performing data analysis for business decision making. Include strategies such as i) handling missing values, ii) data redundancy, iii) handling outliers in prices, and iv) creating new column. **(4 marks)**
+
+#### The strategies that I will be applying to clean the Dataset are the following:
+
+#### i) Handling missing values through imputation with median:
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+```{r}
+colSums(is.na(big)) #finding the number of missing values in each column
+```
+
+```{r}
+hist(big$rating, main = "Ratings", xlab = "Rating", col = "Red", breaks = 15) #creating a histrogram
+```
+
+##### Explanation:
+
+In order to find out which column in the Dataset contains missing values I have made use of is.na() function along with colSums() function. Here is.na() function checks each element in the Dataset for 'NA' (missing values) and colSums() function sums up the number of missing values for each column and returns it as a numeric vector which tells us how many missing values are there in each column. Hence you can see that rating column has 8626 missing values. Further more in order to know which method would be the most appropriate to handle missing values I created a Histrogram in order to see the distribution of ratings across the Dataset. From the above Dataset it can be said that the ratings are not symmetrically distributed with more ratings being concentrated around 3 to 4. Hence distribution for ratings is skewed. Hence, imputation with median is an appropriate way to handle missing values in the Dataset as imputation with median helps in maintaining the overall distribution of the data without shifting the central tendency.Since median is less impacted by outliers using it fill in the missing values helps us to guarantee that the dataset represents a fair picture of the performance of the products specially when one wants to know how the product is being received in the market through ratings data. If these missing values are not taken care of it can lead to bias in analysis as products with complete data might be favoured more than the products with the incomplete data hence leading to the products being evaluated unfairly. Hence handling these missing values is important because it can affect summary statistics negatively and lead to wrong business decisions. The number of observations are 27561 and the number of variables are 9 in the dataset with 8626 missing values in rating column.
+
+#### ii) Handling Data Redundancy by removing duplicate entries:
+
+##### Explanation:
+
+Handling redundant data is important because many identical entries in the Dataset can lead to false and unreliable statistic summaries and calculations such as average and frequency hence by removing duplicate entries we can improve the accuracy of our Dataset which can lead to better and insightful about sales and profit. As now our Dataset will be easier to manage and no memory would be wasted to duplicates which would even lead to an increase in the processing of the Dataset.
+
+#### iii) Handling outliers in market_Price and sale_price:
+
+##### Explanation:
+
+Outliers can lead to the distortion of mean of market price and sale price which can lead to inaccurate estimations of typical prices of the product at which it is more likely to be sold. Since business analyst use sale price and market price data to set the price of the product accordingly the presence of outliers can lead to business analyst setting the price too high which can reduce sales and profit as most customers might not be willing to pay that much price for that product. Outliers can also produce unreliable demand forecasts hence they need to be taken care of in order to produce better management, and supple chain decisions.
+
+#### iv) Creating Two new columns: Discount_rate and Price_difference:
+
+##### Explanation:
+
+Price_difference column will help us gain insights to profit margins which can help us identify which product is being sold at discount ( positive margin ) and which product's price needs reevaluation because of issues like under-pricing (negative margin or zero margin ). While discount_rate columns can tell us how much discount is being offered at being a product relative to its price which can help us estimate profit margin. These columns can help a business analyst plan their price strategy in order to stay competitive in the market and also reduce production costs and boost revenue as it will help them identify their best selling product which they can promote more and worst selling product which they can shelve or reduce production to save costs.
+
+### 2.Perform data manipulation using the 4 strategies listed in (1) by following the order from (i) to (iv). Use the cleaned dataset produced in (i) for (ii), from (ii) to (iii) and from (iii) to (iv). Show the R codes and justify the outputs. Print the header if the output has more than 10 rows. **(4 marks)**
+
+#### i) Handling missing values through imputation with median:
+
+```{r}
+rmedian <- median(big$rating, na.rm = TRUE) # calculates the median of the rating column ignoring 'NA' values
+big$rating[is.na(big$rating)] <- rmedian # replacing 'NA' values with median 
+colSums(is.na(big)) #checking if there is any missing value remaining
+
+```
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+##### Explanation of the output:
+
+Here the output shows that all the missing values that were identified in the first part of section A have been replaced by median values hence now rating column which had 8626 missing values at first now has 0 missing values. The number of observations are 27561 and the number of variables are 9 in the dataset with 0 missing values in rating column.
+
+#### ii) Handling Data Redundancy by removing duplicate entries:
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+```{r}
+big <- subset(big,select = -index) # removing index column from the big dataset because it is unique and does not contribute to our search of duplicate rows 
+big <- unique(big) # unique function removes duplicate rows and only keeps unique rows in the dataset 
+```
+
+```{r}
+num_row<-nrow(big) # checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big) # checking the number of columns before removing duplicate rows
+print("The number of total variables are:") 
+num_col
+```
+
+##### Explanation of the output:
+
+Before removing duplicate rows from the dataset in order to handle data redundancy we had 27561 rows and 9 columns and after removing duplicate rows we have 27193 rows and 8 columns which means that we had 368 rows with data redundancy issues hence removing them has left us with reduced number of rows. In order to achieve this result we first had to removing index column from the big dataset because it is unique and does not contribute to our search of duplicate rows which is why we have 8 columns now instead of 9. Hence now our dataset does not have any duplicate rows.
+
+#### iii) Handling outliers in market_Price and sale_price:
+
+```{r}
+boxplot(big$sale_price,horizontal = TRUE) # creating boxplot with outliers
+```
+
+##### Explanation:
+
+The box-plot for sale_price column is right-skewed. from the above box-plot it can be seen that most outliers indicated by small circles are on the higher end of sale_price range. Hence this indicates that prices vary significantly which might be due to potential pricing errors. With outliers the total number of observations are 27193 and total number of variables are 8
+
+```{r}
+boxplot(big$market_price,horizontal = TRUE) # creating boxplot with outliers
+```
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+##### Explanation:
+
+The box-plot for market_price column is right-skewed. from the above box-plot it can be seen that most outliers indicated by small circles are on the higher end of market_price range. Hence this indicates that prices vary significantly which might be due to potential pricing errors. With outliers the total number of observations are 27193 and total number of variables are 8
+
+```{r}
+IQR_sale_price <- IQR(big$sale_price, na.rm = TRUE) # calculating Interquartile Range (IQR) for the sale_price column
+
+lower_bound <- quantile(big$sale_price, 0.25, na.rm = TRUE) - 1.5 * IQR_sale_price # calculating lower bound in order to find outliers
+
+upper_bound <- quantile(big$sale_price, 0.75, na.rm = TRUE) + 1.5 * IQR_sale_price # calculating upper bound in order to find outliers
+```
+
+```{r}
+big <- big[
+  big$sale_price >= lower_bound & big$sale_price <= upper_bound, ] # filters the dataset to remove outliers and only keeps sale_price that is between lower_bound and upper_bound range 
+```
+
+```{r}
+boxplot(big$sale_price,horizontal = TRUE) # creating boxplot without outliers 
+```
+
+##### Explanation:
+
+Now the boxplot for sale_price column is less skewed and centrally distributed as after removing most of the extreme outliers are data is more concentrated. This makes it easier for us to interpret and analyze the data and figure out statistics like median, central price range. Such statistics can help us improve price strategies. Here the median tell us the typical price that appeals to the customer.
+
+```{r}
+IQR_market_price <- IQR(big$market_price, na.rm = TRUE)# calculating Interquartile Range (IQR) for the market_price column
+
+lower_bound <- quantile(big$market_price, 0.25, na.rm = TRUE) - 1.5 * IQR_market_price # calculating lower bound in order to find outliers
+
+upper_bound <- quantile(big$market_price, 0.75, na.rm = TRUE) + 1.5 * IQR_market_price # calculating upper bound in order to find outliers
+```
+
+```{r}
+big <- big[
+  big$market_price >= lower_bound & big$market_price <= upper_bound, ] # filters the dataset to remove outliers and only keeps market_price that is between lower_bound and upper_bound range 
+```
+
+```{r}
+boxplot(big$market_price,horizontal = TRUE) # creating boxplot without outliers 
+```
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+##### Explanation:
+
+Now the boxplot for sale_price column is less skewed and centrally distributed as after removing most of the extreme outliers are data is more concentrated. This makes it easier for us to interpret and analyze the data and figure out statistics like median, central price range. Such statistics can help us improve price strategies. Here the median tell us the typical price that appeals to the customer.
+
+After removing outliers from both sale_price and market_price columns we are left 24184 total observations and 8 total variables in the dataset hence removing rows with extreme outliers from the dataset
+
+#### iv) Creating Two new columns: Discount_rate and Price_difference:
+
+```{r}
+big<- big %>% 
+  mutate(price_difference = (market_price - sale_price)) # calculating price difference and then adding the values in price_difference column and then adding this column to the dataset through mutate()
+```
+
+```{r}
+big<- big %>%
+  mutate(discount_rate = ((price_difference) / market_price) * 100) # calculating discount rate and then adding the values in discount_rate column and then adding this column to the dataset through mutate()
+head(big)
+```
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+##### Explanation:
+
+After creating and adding price_difference and discount_rate column in our dataset we have 24184 observations and 10 variables in the dataset. These two new columns help business analyst greatly in their analysis as they help us interpret the profit margin and discount better hence assisting in pricing for each product.
+
+### **3.**Use the cleaned dataset produced at the end of question 2 to answer this question. Assume that you have been assigned as a Business Analyst in BigBasket supermarket. Your first project is to perform a price variance analysis using the provided dataset. You have to identify the top 100 products with the highest discount rate. Which category does the majority of the top 100 products fall under? Why do you think this category needs the highest discount rate compared to others?
+
+```{r}
+discount_100 <- head(big%>% 
+                       arrange(desc(discount_rate)), 100) # Sorting dataset by discount_rate in descending order and selecting the top 100 rows
+size2 =nrow(discount_100)# Initialize with the the total number of rows in the dataset
+list1 = c() #Initializing a empty vector to store products that have top 100 rows 
+for (i in 1:size2) {
+  list1 = append(list1,discount_100$product[i]) # appending product names into the vector
+}
+list1
+```
+
+```{r}
+category <- discount_100 %>%
+  count(category, sort = TRUE)# Counting the number of products in each category within the top 100 discounted products
+head(category,1) # showing the category with the most discounted products
+```
+
+##### Explanation:
+
+There is probably a lot of competition for the Kitchen, Garden & Pets category from other retailers. Hence in order remain competitive and attract customers who may otherwise buy from rivals, it might make strategic sense to provide substantial discounts. Also products for Kitchen, Garden & Pets might be seasonal like for example people prefer buying garden tools in seasons like summer or spring hence in order to boost their sales in other seasons great discounts might be offered.
+
+### **4.**As a business analyst, which product will you correlate with the category you found in (3) to increase the sales of the supermarket? Identify that and Explain why. **(4 marks)**
+
+```{r}
+count = big$price_difference[1] # Initialize count with the price difference of the first product
+highest_price_product = big$product[1] # Initialize highest_price_product with the name of the first product
+size1 = nrow(big) # Initialize with the total number of rows in the dataset
+for (i in 2:size1) { # Looping through each product in the dataset starting from the second index
+  if (count < big$price_difference[i]){ # If the current product's price difference is greater than count
+    count = big$price_difference[i]# then update count with the price difference of the current product
+    highest_price_product = big$product[i]#  Then update highest_price_product with the current product's name
+  } else{
+    next # If not, move to the next iteration
+  }
+}
+print("The product with highest profit margin is:")
+print(highest_price_product)
+```
+
+##### Explanation:
+
+Correlating Steel Storage Deep Dabba with Kitchen, Garden & Pets category can have numerous benefits for the supermarket. As since Steel Storage Deep Dabba has the highest profit margin this shows that it has a great demand in the market hence selling it with products from Kitchen,Garden & Pets category can lead to more sales in this area increasing the overall revenue for the supermarket. Also Steel Storage Deep Dabba is a very versatile product making it a good cross sell product hence the super market can create promotional deals that include Steel Storage Deep Dabba and products from Kitchen, Garden & Pets category which can increase overall sales as it would give the customer an incentive to big both products because people buying products from Kitchen, Garden & Pets category might need storage for those products where Steel Storage Deep Dabba can easily come in handy. This helps supermarket win over customers with their deals which further boosts revenue.
+
+### **5.**Use the dataset produced in question 2. Write a conditional statement using the “rating” variable to classify the products into three categories: i) high, ii) average, and iii) poor and store the information in a new column in the same dataset. **(3 marks)**
+
+```{r}
+size = nrow(big) # Initialize with the total number of rows in the dataset
+rating_category <- vector("character", length = size) # Initializing an empty character vector rating_category' with the same length as the number of row
+for (i in 1:size) { # Looping through each row
+  if (big$rating[i] <2.5) { # If the product's rating is less than 2.5 categorize as poor
+    rating_category[i] <- "poor"
+  } else if (big$rating[i] >= 2.5 & big$rating[i] < 4) { # If the rating is between 2.5 and 4, categorize as average
+    rating_category[i] <- "average"
+  } else { # If the rating is 4 or higher, categorize as high
+    rating_category[i] <- "high"
+  }
+}
+big$rating_category <- rating_category
+head(big)
+```
+
+```{r}
+num_row<-nrow(big)# checking the number of rows before removing duplicate rows
+print("The number of total observations are:")
+num_row 
+num_col<-ncol(big)# checking the number of columns before removing duplicate rows
+print("The number of total variables are:")
+num_col
+```
+
+##### Explanation:
+
+After adding the column rating_category the total number of observations are 24184 and the total number of variables are 11 in the dataset
+
+## Section B
+
+### 1.List down three business strategies used by ZARA to be the number one fashion store worldwide. **(3 marks)**
+
+-   Buying low quality material and selling it at discounted rate but higher than the price of the material. This saves investment on raw material and produces great profit because Zara gets high returns on low quality material as customers prefer quantity over quality as they just care about designs and aesthetic of the dress more than long lasting quality.
+
+-   Researching the current market for latest trends and fashion in order to produce new designs every 2 to 3 weeks in order to attract customers who want to keep up with the trend. This also cuts down competition for Zara as other brands do not produce so many designs in such a less time hence leading to an increase in demand of Zara's clothes
+
+-   Not stocking up inventory and producing clothes in just time because customers buy with a mindset of just in case hence they end up buying the clothes thinking that it might go out of stock but Zara produces clothes depending on the demand of that particular product . This leads to an increase in sales which boosts revenue. Thus, Zara does not only make huge revenues through this strategy but also save on storage costs.
+
+### 2.Assume that you are hired as a business analyst in ZARA to analyze their E-Commerce data. Your first task is to create a data frame and perform basic analysis using conditional statements.
+
+#### b) Create a data frame with 5 columns, including productID (create integers from 1 – 20 by yourself), product name, category, subcategory, and price using the information from the website. You must create 20 observations.
+
+```{r}
+data <- data.frame( # creating data frame
+  productID = c(1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20),
+  product_name = c("BELTED PLAYSUIT","CROP DENIM SHIRT","CROPPED SATIN BLAZER","SEQUINNED CAMISOLE TOP","100% WOOL SUIT TROUSERS","BARREL FIT JEANS WITH SEAM","HOODIE","TRAINING TANK TOP","NIGHT POUR HOMME III 100 ML / 3.38 oz","SPLENDID BRONZE 100 ML / 3.38 oz","BARBIE™ EDT 60ML / 2.03 oz","TUBEROSE 90 ML / 3.04 oz","LEATHER BALLET FLATS WITH BOW","PACK OF FOUR STRIPED WIDE HAIR TIES","KNIT POLO SHIRT WITH BUTTONS","LEATHER MAXI BUCKET BAG","KITTEN HEEL SLINGBACKS WITH BOW","RAISED FLOWER EARRINGS","ANIMAL PRINT TRIANGULAR BIKINI TOP","POLO SHIRT WITH CONTRAST COLLAR"),
+  category = c("WOMAN","WOMAN","WOMAN","WOMAN","MAN","MAN","MAN","MAN","MAN","WOMAN","KIDS","WOMEN","KIDS","KIDS","WOMAN","WOMAN","WOMAN","WOMAN","WOMAN","MAN"),
+  sub_category = c("DRESSES","SHIRTS","BlAZERS","TOPS|BODYSUITS","TROUSERS","JEANS","HOODIES|SWEATSHIRTS","T-SHIRTS","PERFUMES","PERFUMES","ACCESSSORIES|SHOES|0-14 YEARS","PERFUMES","ACCESSSORIES|SHOES|0-14 YEARS","ACCESSSORIES|SHOES|0-14 YEARS","KNITWEAR","BAGS","SHOES","ACCESSIORIES|JEWELLERY","SWIMSUITS|BIKINIS","POLO SHIRTS"),
+  price = c(269.00,189.00,269.00,169.00,369.00,369.00,249.00,89.90,109.00,149.00,85.90,89.90,199.00,29.90,189.00,969.00,219.00,109.00,149.00,199.00)
+)
+data
+```
+
+### c)Write a conditional statement using the price of the products in your data frame as an independent variable and subcategory as your target variable. Identify the subcategories at the highest and lowest prices using the conditional statement.
+
+```{r}
+count = data$price[1] # Initialize 'count' with the price of the first product
+highest_price_subcategory = data$sub_category[1] # Initialize highest_price_subcategory with the sub-category of the first product
+size3=nrow(data) # Initialize with the the total number of rows in the dataset
+#Loop through each product in the dataset starting from the second index
+for (i in 2:size3) { 
+  if (count < data$price[i]){ # If the current product's price is greater than count
+    count = data$price[i] # Update count with the price of the current product
+    highest_price_subcategory = data$sub_category[i] # Update 'highest_price_subcategory' with the current product's sub-category
+  } else{
+    next # If not move to the next iteration
+  }
+}
+
+count = data$price[1]  # Initialize 'count' with the price of the first product
+lowest_price_subcategory = data$sub_category[1]  # Initialize lowest_price_subcategory with the sub-category of the first product
+for (i in 2:size3) { #Loop through each product in the dataset starting from the second index
+  if (count > data$price[i]){ # If the current product's price is less than count
+    count = data$price[i]   # Update count with the price of the current product
+    lowest_price_subcategory = data$sub_category[i]  # Update 'lowest_price_subcategory' with the current product's sub-category
+  } else{
+    next # If not move to the next iteration
+  }
+}
+
+print("The subcategory with the highest price is")
+highest_price_subcategory
+print("The subcategory with the lowest price is")
+lowest_price_subcategory
+```
+
+### d)Write a conditional statement to identify the products in Q1 and Q3 of the price range and explain the output.
+
+```{r}
+Q1_zara <- quantile(data$price, 0.25, na.rm = TRUE)# Calculate the first (Q1) quartile of the price
+
+Q3_zara <- quantile(data$price, 0.75, na.rm = TRUE) # Calculate the third (Q3) quartile of the price
+size4 = nrow(data) # Initialize with the the total number of rows in the dataset
+# Initialize vectors to store product names for Q1 and Q3
+product_q1 = c() # for Q1
+product_q3 = c() # for Q3
+# Loop through each product in the dataset
+for (i in 1:size4) {
+  if (data$price[i] <= Q1_zara){  # If the price is less than or equal to Q1, add to product_q1
+    product_q1 = append(product_q1,data$product_name[i])
+  } else{ # else move to the next iteration
+    next
+  }
+}
+# Loop through each product in the dataset
+for (i in 1:size4) {
+  if (data$price[i] > Q3_zara){ # If the price is greater than Q3, add to 'product_q3'
+    product_q3 = append(product_q3,data$product_name[i])
+  } else{ # else move to the next iteration
+    next
+  }
+}
+print("The Q1 of the price is:")
+Q1_zara
+product_q1
+print("The Q3 of the price is:")
+Q3_zara
+product_q3
+```
+
+##### Explanation:
+
+Q3 is the 75th percentile of the price distribution which means that 25% of the products have prices above this value which is 254 according to the calculations. Hence the products listed in product_q3 have prices greater than 254. Hence, it can be said that these products are high priced compared to the other products. These products can be premium which are for customers who want luxury items. Q1 is the 25th percentile of the price distribution which means that 25% of the products have prices at or below this value which is 109 according to the calculations. Hence the products listed in product_q1 have prices below or equal to 109. Hence, it can be said that these products are low priced compared to the other products. These products can be budget friendly which are for customers who want affordable items.
